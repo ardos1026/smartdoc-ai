@@ -1,0 +1,2 @@
+SmartDoc AI is a cloud-native document question answering platform.
+It uses Python, RAG, vector search, and Gemini to answer questions from documents.

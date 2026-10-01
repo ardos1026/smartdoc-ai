@@ -1,5 +1,11 @@
+from app.utils import get_app_info
+
+
 def main():
-    print("SmartDoc AI is starting...")
+    info = get_app_info()
+
+    print(f"{info['name']} v{info['version']}")
+    print(f"Status: {info['status']}")
 
 
 if __name__ == "__main__":
