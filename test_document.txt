@@ -1,0 +1,5 @@
+Docker is a platform used to package applications and their dependencies into containers.
+
+Google Cloud Run is a fully managed service for running containerized applications.
+
+Docker containers make applications easier to build, ship, and deploy consistently.
