@@ -1,21 +1,37 @@
-from app.gemini_client import ask_gemini
-from app.config import GEMINI_API_KEY
-from app.utils import get_app_info
+from app.chunker import split_text
+from app.document_loader import load_document
+from app.gemini_client import create_embedding
+from app.vector_store import VectorStore
+from app.rag import ask_question
 
 
 def main():
-    info = get_app_info()
+    content = load_document("sample.txt")
+    chunks = split_text(content)
 
-    print(f"{info['name']} v{info['version']}")
-    print(f"Status: {info['status']}")
+    store = VectorStore()
 
-    if GEMINI_API_KEY:
-        print("Gemini API key loaded successfully.")
+    print(f"Document loaded: {len(content)} characters")
+    print(f"Created {len(chunks)} chunks")
 
-        response = ask_gemini("Say hello to SmartDoc AI in one sentence.")
-        print(f"Gemini: {response}")
-    else:
-        print("Gemini API key not found.")
+    for chunk in chunks:
+        embedding = create_embedding(chunk)
+        store.add(chunk, embedding)
+
+    print("All chunks embedded and stored.")
+
+    question = "Who is the CEO of SmartDoc AI?"
+    print(f"\nQuestion: {question}")
+    print("\nGenerating answer...")
+
+    answer = ask_question(
+        question,
+        store,
+        top_k=2,
+    )
+
+    print("\nAnswer:")
+    print(answer)
 
 
 if __name__ == "__main__":

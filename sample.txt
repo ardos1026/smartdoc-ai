@@ -1,2 +1,19 @@
-SmartDoc AI is a cloud-native document question answering platform.
-It uses Python, RAG, vector search, and Gemini to answer questions from documents.
+SmartDoc AI is a cloud-native AI document question answering platform.
+
+The platform allows users to upload documents and ask questions about their content.
+
+SmartDoc AI uses Retrieval-Augmented Generation to find relevant information from documents before sending context to a language model.
+
+The document processing pipeline extracts text from uploaded files and divides the text into smaller chunks.
+
+Each chunk can later be converted into an embedding and stored in a vector database.
+
+When a user asks a question, the system searches the vector database for the most relevant chunks.
+
+The retrieved chunks are then provided as context to Gemini.
+
+This allows SmartDoc AI to generate answers based on the user's documents instead of relying only on general model knowledge.
+
+The platform will eventually use Docker, GitHub Actions, Google Cloud, Cloud Run, IAM, Secret Manager, logging, monitoring, and Terraform.
+
+The goal is to build a production-style cloud-native AI application while demonstrating practical DevOps skills.
