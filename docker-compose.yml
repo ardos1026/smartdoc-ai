@@ -3,6 +3,6 @@ services:
     build: .
     container_name: smartdoc-ai
     ports:
-      - "8501:8501"
+      - "8501:8080"
     env_file:
       - .env
