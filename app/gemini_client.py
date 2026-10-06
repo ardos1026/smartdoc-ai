@@ -1,3 +1,5 @@
+import time
+
 from google import genai
 
 from app.config import GEMINI_API_KEY
@@ -22,15 +24,41 @@ def get_client():
     return _client
 
 
-def ask_gemini(prompt):
+def ask_gemini(prompt, max_retries=3):
     client = get_client()
 
-    interaction = client.interactions.create(
-        model="gemini-3.8-flash",
-        input=prompt,
-    )
+    for attempt in range(max_retries):
+        try:
+            interaction = client.interactions.create(
+                model="gemini-3.8-flash",
+                input=prompt,
+            )
 
-    return interaction.output_text
+            return interaction.output_text
+
+        except Exception as error:
+
+            error_message = str(error).lower()
+
+            is_temporary_error = (
+                "503" in error_message
+                or "service_unavailable" in error_message
+                or "temporarily unavailable" in error_message
+                or "high demand" in error_message
+            )
+
+            if not is_temporary_error:
+                raise
+
+            if attempt == max_retries - 1:
+                return (
+                    "⚠️ Gemini is temporarily unavailable. "
+                    "Please try again in a moment."
+                )
+
+            wait_time = 2 ** attempt
+
+            time.sleep(wait_time)
 
 
 def create_embedding(text):
