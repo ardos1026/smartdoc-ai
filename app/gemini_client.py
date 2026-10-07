@@ -1,9 +1,12 @@
+import logging
 import time
 
 from google import genai
 
 from app.config import GEMINI_API_KEY
 
+
+logger = logging.getLogger(__name__)
 
 _client = None
 
@@ -46,6 +49,15 @@ def ask_gemini(prompt, max_retries=3):
                 or "temporarily unavailable" in error_message
                 or "high demand" in error_message
             )
+
+            if is_temporary_error:
+                logger.warning(
+                "Gemini temporary error detected: %s | retry=%d/%d",
+                error_message,
+                attempt + 1,
+                max_retries,
+                )
+
 
             if not is_temporary_error:
                 raise
