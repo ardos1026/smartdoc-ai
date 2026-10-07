@@ -1,10 +1,14 @@
 import streamlit as st
-
+import logging
 from app.chunker import split_text
 from app.document_loader import load_document
 from app.gemini_client import create_embedding
 from app.vector_store import VectorStore
 from app.rag import ask_question
+
+logging.basicConfig(level=logging.INFO)
+
+logger = logging.getLogger(__name__)
 
 
 st.set_page_config(
@@ -69,6 +73,12 @@ if uploaded_file:
         # Save processed document
         st.session_state.vector_store = store
         st.session_state.file_name = uploaded_file.name
+
+        logger.info(
+            "Document processed successfully: %s | chunks=%d",
+            uploaded_file.name,
+            len(chunks),
+        )
 
         st.success(
             f"Document processed into {len(chunks)} chunks."
