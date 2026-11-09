@@ -31,7 +31,7 @@ resource "google_cloud_run_v2_service" "smartdoc_ai" {
   name     = "smartdoc-ai"
   location = "asia-south1"
   project  = data.google_project.current.project_id
-  
+
   client         = "gcloud"
   client_version = "587.0.0"
 
@@ -56,9 +56,12 @@ resource "google_cloud_run_v2_service" "smartdoc_ai" {
     }
   }
 
-
   lifecycle {
     prevent_destroy = true
+
+    ignore_changes = [
+      template[0].containers[0].image
+    ]
   }
 }
 
