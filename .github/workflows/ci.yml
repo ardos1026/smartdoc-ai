@@ -49,8 +49,47 @@ jobs:
       - name: Build Docker image
         run: docker build -t smartdoc-ai .
 
-  deploy:
+  auth-test:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    needs: test
+
+    permissions:
+      contents: read
+      id-token: write
+
+    env:
+      PROJECT_ID: smartdoc-ai-510812
+      REGION: asia-south1
+
+    steps:
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: projects/722361220782/locations/global/workloadIdentityPools/github-pool/providers/github-provider
+          service_account: github-actions-deployer@smartdoc-ai-510812.iam.gserviceaccount.com
+
+      - name: Set up Google Cloud CLI
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: smartdoc-ai-510812
+
+      - name: Verify authenticated identity
+        run: |
+          echo "Active Google Cloud identity:"
+          gcloud auth list --filter=status:ACTIVE --format="value(account)"
+
+      - name: Verify read-only Cloud Run access
+        run: |
+          gcloud run services describe smartdoc-ai \
+            --project="$PROJECT_ID" \
+            --region="$REGION" \
+            --format="value(name)"
+
+
+  deploy:
+    if: false
+    # if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     needs: test
 
